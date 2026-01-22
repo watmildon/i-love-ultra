@@ -2,7 +2,7 @@
 
 # Ultra is so so so so good
 
-This repository is my love letter to Ultra. The best thing going for making maps with OpenStreetMap data. If you have an Ultra file you'd like to contribute, pull requests welcome.
+This repository is my love letter to [Ultra](https://overpass-ultra.us/docs/). The best thing going for making maps with OpenStreetMap data. If you have an Ultra file you'd like to contribute, pull requests welcome.
 
 ## Ultra Files
 
