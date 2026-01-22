@@ -1,0 +1,71 @@
+---
+server: https://overpass.private.coffee/api/
+transform: |
+  import { buffer } from "https://esm.sh/@turf/buffer";
+  import { difference } from "https://esm.sh/@turf/difference";
+  export default (data) => {
+    const buffers = [];
+    const distances = [1, 0.75, 0.5, 0.25]; // km, largest first for proper layering
+    data.features.forEach(feature => {
+      distances.forEach((km, i) => {
+        const outer = buffer(feature, km, { units: "kilometers" });
+        let ring;
+        if (i < distances.length - 1) {
+          // Create donut by subtracting the next smaller buffer
+          const inner = buffer(feature, distances[i + 1], { units: "kilometers" });
+          // difference() expects a FeatureCollection with 2+ features
+          const fc = { type: "FeatureCollection", features: [outer, inner] };
+          ring = difference(fc);
+        } else {
+          // Innermost ring stays as-is (smallest buffer)
+          ring = outer;
+        }
+        if (ring) {
+          ring.properties = { ...feature.properties, bufferDistance: km };
+          buffers.push(ring);
+        }
+      });
+    });
+    return {
+      type: "FeatureCollection",
+      features: [...buffers, ...data.features]
+    };
+  };
+style:
+  layers:
+    - type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 1]]
+      paint:
+        fill-color: "#fee5d9"
+        fill-opacity: 0.6
+    - type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 0.75]]
+      paint:
+        fill-color: "#fcae91"
+        fill-opacity: 0.6
+    - type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 0.5]]
+      paint:
+        fill-color: "#fb6a4a"
+        fill-opacity: 0.6
+    - type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 0.25]]
+      paint:
+        fill-color: "#cb181d"
+        fill-opacity: 0.6
+    - type: line
+      filter: [==, [geometry-type], Polygon]
+      paint:
+        line-color: "#99000d"
+        line-width: 1
+    - type: circle
+      filter: [==, [geometry-type], Point]
+      paint:
+        circle-color: "#67000d"
+        circle-radius: 6
+        circle-stroke-color: "#ffffff"
+        circle-stroke-width: 2
+---
+[out:json][timeout:800];
+nwr[amenity=fire_station]({{bbox}});
+out center;

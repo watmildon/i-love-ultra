@@ -1,0 +1,35 @@
+---
+server: https://overpass.private.coffee/api/
+transform: |
+  import { voronoi } from "https://esm.sh/@turf/voronoi";
+  export default (data) => {
+    const voronoiPolygons = voronoi(data);
+    voronoiPolygons.features = [...voronoiPolygons.features, ...data.features];
+    return voronoiPolygons;
+  };
+style:
+  layers:
+    - type: fill
+      filter: [==, [geometry-type], Polygon]
+      paint:
+        fill-color: "#4a90d9"
+        fill-opacity: 0.3
+    - type: line
+      filter: [==, [geometry-type], Polygon]
+      paint:
+        line-color: "#2c5aa0"
+        line-width: 1
+    - type: circle
+      filter: [==, [geometry-type], Point]
+      paint:
+        circle-color: "#d94a4a"
+        circle-radius: 5
+        circle-stroke-color: "#ffffff"
+        circle-stroke-width: 1
+---
+[out:json][timeout:800];
+(
+  nwr[amenity=school][grades="9-12"]({{bbox}});
+  nwr[amenity=school][name~"High School"]({{bbox}});
+);
+out center;

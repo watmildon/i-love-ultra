@@ -1,0 +1,55 @@
+---
+server:  https://overpass.private.coffee/api/
+style:
+  layers:
+    - type: circle
+      circle-color:
+        - interpolate
+        - [linear]
+        - ['to-number', ['slice', ['get', '@timestamp'], 0, 4]]
+        - 2015
+        - orange
+        - 2026
+        - blue
+      circle-radius: 4
+    - type: fill
+      filter:
+        - any
+        - ['==', ['get', 'area'], 'yes']
+        - ['has', 'building']
+        - ['has', 'landuse']
+        - ['has', 'amenity']
+        - ['has', 'shop']
+        - ['has', 'building:part']
+        - ['has', 'boundary']
+        - ['has', 'historic']
+        - ['has', 'place']
+        - ['has', 'area:highway']
+        - ['in', ['get', 'highway'], ['literal', ['rest_area', 'services', 'platform']]]
+        - ['==', ['get', 'railway'], 'platform']
+        - ['==', ['get', 'aeroway'], 'aerodrome']
+        - ['all', ['has', 'leisure'], ['!', ['in', ['get', 'leisure'], ['literal', ['picnic_table', 'slipway', 'firepit']]]]]
+        - ['in', ['get', 'natural'], ['literal', ['water', 'wood', 'scrub', 'land', 'grassland', 'heath', 'rock', 'bare_rock', 'sand', 'beach', 'scree', 'glacier', 'shingle', 'fell', 'reef', 'stone', 'mud', 'landslide']]]
+      fill-color:
+        - interpolate
+        - [linear]
+        - ['to-number', ['slice', ['get', '@timestamp'], 0, 4]]
+        - 2015
+        - orange
+        - 2026
+        - blue
+      fill-opacity: 0.5
+    - type: line
+      line-color:
+        - interpolate
+        - [linear]
+        - ['to-number', ['slice', ['get', '@timestamp'], 0, 4]]
+        - 2015
+        - orange
+        - 2026
+        - blue
+      line-width: 3
+---
+[out:json][timeout:300];
+nwr({{bbox}});
+out meta geom;

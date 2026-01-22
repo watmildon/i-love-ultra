@@ -1,0 +1,57 @@
+---
+server: https://overpass.private.coffee/api/
+transform: |
+  import { buffer } from "https://esm.sh/@turf/buffer";
+  export default (data) => {
+    const buffers = [];
+    const distances = [1, .75, .5, 0.25]; // km, largest first for proper layering
+    distances.forEach(km => {
+      const buffered = buffer(data, km, { units: "kilometers" });
+      buffered.features.forEach(f => {
+        f.properties = { ...f.properties, bufferDistance: km };
+      });
+      buffers.push(...buffered.features);
+    });
+    return {
+      type: "FeatureCollection",
+      features: [...buffers, ...data.features]
+    };
+  };
+style:
+  layers:
+    - type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 1]]
+      paint:
+        fill-color: "#fee5d9"
+        fill-opacity: 0.6
+    - type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 0.75]]
+      paint:
+        fill-color: "#fcae91"
+        fill-opacity: 0.6
+    - type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 0.5]]
+      paint:
+        fill-color: "#fb6a4a"
+        fill-opacity: 0.6
+    - type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 0.25]]
+      paint:
+        fill-color: "#cb181d"
+        fill-opacity: 0.6
+    - type: line
+      filter: [==, [geometry-type], Polygon]
+      paint:
+        line-color: "#99000d"
+        line-width: 1
+    - type: circle
+      filter: [==, [geometry-type], Point]
+      paint:
+        circle-color: "#67000d"
+        circle-radius: 6
+        circle-stroke-color: "#ffffff"
+        circle-stroke-width: 2
+---
+[out:json][timeout:800];
+nwr[amenity=fire_station]({{bbox}});
+out center;

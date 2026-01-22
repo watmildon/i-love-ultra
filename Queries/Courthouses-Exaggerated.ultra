@@ -1,0 +1,35 @@
+---
+server: https://overpass.private.coffee/api/
+transform: |
+  import { transformScale } from "https://esm.sh/@turf/transform-scale";
+  export default (data) => {
+    const scaled = data.features.map(feature => {
+      if (feature.geometry.type === "Polygon" || feature.geometry.type === "MultiPolygon") {
+        const enlarged = transformScale(feature, 100, { origin: "centroid" });
+        enlarged.properties = { ...feature.properties, scaled: true };
+        return enlarged;
+      }
+      return feature;
+    });
+    return {
+      type: "FeatureCollection",
+      features: scaled
+    };
+  };
+style:
+  layers:
+    - type: fill
+      filter: [ ==, [ geometry-type ], Polygon ]
+      paint:
+        fill-color: "#8b5cf6"
+        fill-opacity: 1.0
+    - type: line
+      filter: [ ==, [ geometry-type ], Polygon ]
+      paint:
+        line-color: "#5b21b6"
+        line-width: 2
+  extends: https://styles.trailsta.sh/dark-matter.json
+---
+[out:json][timeout:300];
+wr[amenity=courthouse]({{bbox}});
+out geom;

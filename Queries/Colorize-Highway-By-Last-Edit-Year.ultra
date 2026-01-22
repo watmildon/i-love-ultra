@@ -1,0 +1,18 @@
+---
+server:  https://overpass.private.coffee/api/
+style:
+  layers:
+    - type: line
+      line-color:
+        - interpolate
+        - [linear]
+        - ['to-number', ['slice', ['get', '@timestamp'], 0, 4]]
+        - 2015
+        - orange
+        - 2026
+        - blue
+      line-width: 3
+---
+[out:json][timeout:300];
+way[highway]({{bbox}});
+out meta geom;
