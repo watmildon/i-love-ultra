@@ -1,3 +1,5 @@
+<img width="208" height="196" alt="image" src="https://github.com/user-attachments/assets/bbc3b04f-a157-40b8-b94e-1c8437b7781f" />
+
 # Ultra is so so so so good
 
 This repository is my love letter to Ultra. The best thing going for making maps with OpenStreetMap data. If you have an Ultra file you'd like to contribute, pull requests welcome.
