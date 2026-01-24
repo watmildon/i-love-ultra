@@ -1,0 +1,26 @@
+---
+server: https://overpass.private.coffee/api/
+style:
+  layers:
+    - type: symbol
+      layout:
+        text-field:
+          - format
+          - [ "get", "nickname" ]
+          - { "font-scale": 1.0 }
+          - "\n("
+          - { "font-scale": 0.5 }
+          - [ "get", "name" ]
+          - { "font-scale": 0.5 }
+          - ")"
+          - { "font-scale": 0.5 }
+        text-size: 28
+        text-anchor: center
+      paint:
+        text-color: "#333333"
+        text-halo-color: "#ffffff"
+        text-halo-width: 1.5
+  extends: https://styles.trailsta.sh/positron.json
+---
+nwr[nickname]({{bbox}});
+out center;

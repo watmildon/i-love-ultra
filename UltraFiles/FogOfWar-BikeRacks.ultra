@@ -1,0 +1,22 @@
+---
+server: https://overpass.private.coffee/api/
+style:
+  layers:
+    - type: heatmap
+      heatmap-intensity: 10
+      heatmap-radius:
+        stops:
+          - [10, 1] 
+          - [22, 4096]
+        base: 2
+      heatmap-color:
+        - interpolate
+        - [linear]
+        - [heatmap-density]
+        - 0
+        - rgba(0,0,0,.8)
+        - 1
+        - rgba(0,0,0,0)
+---
+nwr[amenity=bicycle_parking]({{bbox}});
+out center;
