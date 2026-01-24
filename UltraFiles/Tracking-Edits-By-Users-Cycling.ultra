@@ -1,0 +1,24 @@
+---
+server: https://overpass.private.coffee/api/
+style:
+  layers:
+    - type: line
+      line-color:
+        - case
+        - [ 'in', [ 'get', '@user' ], [ 'literal', [ 'jacobwhall', 'dpschep' ] ] ]
+        - '#0077BB'
+        - '#EE7733'
+      line-width: 4
+  extends: https://api.protomaps.com/styles/v5/dark/en.json?key=f8eceeaad6896c92
+---
+[out:json][timeout:300];
+// Test location: Richmond, VA (37.511962, -77.473624) https://overpass-ultra.us/#m=15.14/37.511962/-77.473624
+(
+  way[cycleway]({{bbox}});
+  way["cycleway:left"]({{bbox}});
+  way["cycleway:right"]({{bbox}});
+  way["cycleway:both"]({{bbox}});
+  way[highway=cycleway]({{bbox}});
+  way[bicycle=designated]({{bbox}});
+);
+out meta geom;
