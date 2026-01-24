@@ -1,0 +1,28 @@
+---
+style:
+  layers:
+    - id: womens-sports-bars-icon
+      type: symbol
+      source: ultra
+      layout:
+        icon-image: maki:soccer
+        icon-size: 1.5
+        icon-allow-overlap: true
+        text-field: ["get", "name"]
+        text-font: ["Noto Sans Regular"]
+        text-size: 24
+        text-offset: [0, 1.5]
+        text-anchor: top
+        text-optional: true
+        text-allow-overlap: true
+      paint:
+        icon-color: "#EE7733"
+        text-color: "#FFFFFF"
+  extends: https://api.protomaps.com/styles/v5/dark/en.json?key=f8eceeaad6896c92
+---
+// testing location, United States/North America: https://overpass-ultra.us/#m=3.72/37.69/-100.35
+[out:json][timeout:500];
+(
+  nwr["bar:type"="womens_sports_bar"];
+);
+out center;
