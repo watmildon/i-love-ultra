@@ -1,20 +1,27 @@
 ---
 style:
   layers:
+    - id: womens-sports-bars-point
+      type: circle
+      source: ultra
+      paint:
+        circle-radius: 4
+        circle-color: "#EE7733"
+        circle-stroke-width: 2
+        circle-stroke-color: "#FFFFFF"
     - id: womens-sports-bars-icon
       type: symbol
       source: ultra
       layout:
         icon-image: maki:soccer
         icon-size: 1.5
-        icon-allow-overlap: true
         text-field: ["get", "name"]
         text-font: ["Noto Sans Regular"]
         text-size: 24
-        text-offset: [0, 1.5]
+        text-offset: [0, 1.0]
         text-anchor: top
         text-optional: true
-        text-allow-overlap: true
+        icon-allow-overlap: false
       paint:
         icon-color: "#EE7733"
         text-color: "#FFFFFF"
