@@ -32,6 +32,8 @@ transform: |
     };
   };
 style:
+  projection:
+    type: "globe"
   layers:
     - type: fill
       filter: [all, [==, [geometry-type], Polygon], [==, [get, bufferDistance], 1]]

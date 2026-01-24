@@ -8,6 +8,8 @@ transform: |
     return voronoiPolygons;
   };
 style:
+  projection:
+    type: "globe"
   layers:
     - type: fill
       filter: [==, [geometry-type], Polygon]

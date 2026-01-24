@@ -1,6 +1,8 @@
 ---
 server: https://overpass.private.coffee/api/
 style:
+  projection:
+    type: "globe"
   layers:
     - type: symbol
       layout:
