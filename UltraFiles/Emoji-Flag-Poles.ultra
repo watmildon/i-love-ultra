@@ -1,0 +1,18 @@
+---
+style:
+  layers:
+    - type: symbol
+      icon-overlap: always
+      icon-image:
+        - coalesce
+        - - image
+          - - concat
+            - 'emoji:flag-'
+            - - downcase
+              - [ get, country ]
+        - - image
+          - emoji:question
+---
+[bbox:{{bbox}}];
+nwr[man_made=flagpole][country];
+out center;
