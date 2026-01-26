@@ -4,6 +4,12 @@ style:
   projection:
     type: "globe"
   layers:
+    - type: circle
+      paint:
+        circle-radius: 4
+        circle-color: "#000000"
+        circle-stroke-width: 2
+        circle-stroke-color: "#FFFFFF"
     - type: symbol
       layout:
         text-field:
@@ -24,5 +30,6 @@ style:
         text-halo-width: 1.5
   extends: https://styles.trailsta.sh/positron.json
 ---
+// test location - https://overpass-ultra.us/#m=5.65/46.304/-119.575
 nwr[nickname]({{bbox}});
 out center;

@@ -1,0 +1,148 @@
+---
+server: https://overpass.private.coffee/api/
+transform: |
+  import polylabel from "https://esm.sh/@mapbox/polylabel";
+  export default (data) => {
+    const labelPoints = [];
+    for (const f of data.features) {
+      let p = f.geometry.coordinates;
+      switch (f.geometry.type) {
+        case "MultiPolygon":
+          p = f.geometry.coordinates[0];
+        case "Polygon":
+          labelPoints.push({
+            type: "Feature",
+            geometry: { type: "Point", coordinates: polylabel(p, 0.000001) },
+            properties: { ...f.properties }
+          });
+          break;
+      }
+    }
+    return {
+      type: "FeatureCollection",
+      features: [...data.features, ...labelPoints]
+    };
+  };
+style:
+  layers:
+    # Farmland fill - light tan
+    - id: farmland-fill
+      type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, landuse], farmland]]
+      paint:
+        fill-color: "#DDAA33"
+        fill-opacity: 0.3
+    # Farmland outline - orange
+    - id: farmland-outline
+      type: line
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, landuse], farmland]]
+      paint:
+        line-color: "#EE7733"
+        line-width: 2
+    # Orchard fill - light green
+    - id: orchard-fill
+      type: fill
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, landuse], orchard]]
+      paint:
+        fill-color: "#009988"
+        fill-opacity: 0.3
+    # Orchard outline - teal
+    - id: orchard-outline
+      type: line
+      filter: [all, [==, [geometry-type], Polygon], [==, [get, landuse], orchard]]
+      paint:
+        line-color: "#0077BB"
+        line-width: 2
+    # Crop icons - SDF temaki icons (colorable) for features WITH crop tag
+    - id: crop-icons
+      type: symbol
+      filter: [all, [==, [geometry-type], Point], [has, crop]]
+      icon-image:
+        - case
+        # Grapes/wine - most common crop (45%)
+        - [in, [get, crop], [literal, [grape, grapes, wine]]]
+        - temaki:grapes
+        # Cereal/wheat/barley/grain/rice - bread icon (covers ~38% of crops)
+        - [in, [get, crop], [literal, [rice, cereal, wheat, barley, grain, rye, oat, oats, corn, maize]]]
+        - temaki:bread
+        # Grass/hay/pasture
+        - [in, [get, crop], [literal, [grass, hay, pasture]]]
+        - temaki:grass
+        # Coffee
+        - [==, [get, crop], coffee]
+        - temaki:coffee
+        # Tea - use hot drink cup
+        - [==, [get, crop], tea]
+        - temaki:hot_drink_cup
+        # Hops - use shrub
+        - [in, [get, crop], [literal, [hop, hops]]]
+        - temaki:shrub
+        # Fruit trees (orchards) - apple, cherry, citrus, etc
+        - [in, [get, crop], [literal, [apple, apples, cherry, cherries, peach, pear, plum, apricot, citrus, orange, lemon, olive, olives]]]
+        - temaki:tree_broadleaved
+        # Berries and small fruits
+        - [in, [get, crop], [literal, [strawberry, strawberries, blueberry, raspberry, berry, berries]]]
+        - temaki:shrub_low
+        # Vegetables/market gardening - use garden bed
+        - [in, [get, crop], [literal, [vegetables, vegetable, market_gardening, tomato, potato, potatoes, onion, carrot, sugarcane, soy, soybean, soybeans]]]
+        - temaki:garden_bed
+        # Nuts - trees
+        - [in, [get, crop], [literal, [almond, walnut, hazelnut, chestnut, pistachio, nuts]]]
+        - temaki:tree_broadleaved
+        # Has crop tag but not matched above - generic plant
+        - temaki:plant
+      icon-size: 1.0
+      icon-allow-overlap: false
+      icon-color:
+        - case
+        # Grapes - purple
+        - [in, [get, crop], [literal, [grape, grapes, wine]]]
+        - "#7B2D8E"
+        # Cereals/grains - golden wheat color
+        - [in, [get, crop], [literal, [rice, cereal, wheat, barley, grain, rye, oat, oats, corn, maize]]]
+        - "#D4A017"
+        # Grass - green
+        - [in, [get, crop], [literal, [grass, hay, pasture]]]
+        - "#228B22"
+        # Coffee - brown
+        - [==, [get, crop], coffee]
+        - "#6F4E37"
+        # Tea - green
+        - [==, [get, crop], tea]
+        - "#2E8B57"
+        # Hops - yellow-green
+        - [in, [get, crop], [literal, [hop, hops]]]
+        - "#9ACD32"
+        # Fruit trees - red/orange
+        - [in, [get, crop], [literal, [apple, apples, cherry, cherries, peach, pear, plum, apricot, citrus, orange, lemon, olive, olives]]]
+        - "#CC3311"
+        # Berries - red
+        - [in, [get, crop], [literal, [strawberry, strawberries, blueberry, raspberry, berry, berries]]]
+        - "#DC143C"
+        # Vegetables - earthy green
+        - [in, [get, crop], [literal, [vegetables, vegetable, market_gardening, tomato, potato, potatoes, onion, carrot, sugarcane, soy, soybean, soybeans]]]
+        - "#556B2F"
+        # Nuts - brown
+        - [in, [get, crop], [literal, [almond, walnut, hazelnut, chestnut, pistachio, nuts]]]
+        - "#8B4513"
+        # Other crops - teal
+        - "#009988"
+      icon-halo-color: "#FFFFFF"
+      icon-halo-width: 2
+    # Question mark icon for features WITHOUT crop tag (non-SDF, separate layer)
+    - id: unknown-crop-icons
+      type: symbol
+      filter: [all, [==, [geometry-type], Point], ["!", [has, crop]]]
+      icon-image: emoji:question
+      icon-size: 1.0
+      icon-allow-overlap: false
+---
+// View crops on farmland and orchards
+// Testing location: https://overpass-ultra.us/#m=13.46/43.12639/6.1925
+[out:json][timeout:300];
+(
+  wr[landuse=farmland]({{bbox}});
+  wr[landuse=orchard]({{bbox}});
+  wr[landuse=vineyard]({{bbox}});
+);
+out body geom;
