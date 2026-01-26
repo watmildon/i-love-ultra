@@ -13,6 +13,7 @@ style:
         - - image
           - emoji:question
 ---
+// test location: https://overpass-ultra.us/#m=18.71/40.7499986/-73.9684767
 [bbox:{{bbox}}];
 nwr[man_made=flagpole][country];
 out center;

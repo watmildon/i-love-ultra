@@ -20,5 +20,6 @@ style:
         - 1
         - rgba(0,0,0,0)
 ---
+// test location - https://overpass-ultra.us/#m=14.37/47.67509/-122.12159
 nwr[amenity=bicycle_parking]({{bbox}});
 out center;
