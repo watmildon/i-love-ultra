@@ -5,23 +5,21 @@ style:
       type: circle
       source: ultra
       paint:
-        circle-radius: 4
+        circle-radius: 3.5
         circle-color: "#EE7733"
-        circle-stroke-width: 2
-        circle-stroke-color: "#FFFFFF"
     - id: womens-sports-bars-icon
       type: symbol
       source: ultra
       layout:
+        icon-offset: [-7, -9]
         icon-image: maki:soccer
         icon-size: 1.5
         text-field: ["get", "name"]
         text-font: ["Noto Sans Regular"]
         text-size: 24
-        text-offset: [0, 1.0]
+        text-offset: [0, .5]
         text-anchor: top
         text-optional: true
-        icon-allow-overlap: false
       paint:
         icon-color: "#EE7733"
         text-color: "#FFFFFF"
