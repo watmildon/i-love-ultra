@@ -1,0 +1,62 @@
+---
+server: https://overpass.private.coffee/api/
+style:
+  projection:
+    type: "globe"
+  layers:
+    # Taco Time Northwest (Q7673970) - teal
+    - type: circle
+      filter: ["==", ["get", "brand:wikidata"], "Q7673970"]
+      paint:
+        circle-color: "#009988"
+        circle-radius: 7
+        circle-stroke-color: "#ffffff"
+        circle-stroke-width: 2
+    # Taco Time national (Q7673969) - orange
+    - type: circle
+      filter: ["==", ["get", "brand:wikidata"], "Q7673969"]
+      paint:
+        circle-color: "#EE7733"
+        circle-radius: 7
+        circle-stroke-color: "#ffffff"
+        circle-stroke-width: 2
+    # Fallback - no brand:wikidata tagged
+    - type: circle
+      filter: ["!", ["has", "brand:wikidata"]]
+      paint:
+        circle-color: "#BBBBBB"
+        circle-radius: 5
+        circle-stroke-color: "#ffffff"
+        circle-stroke-width: 1
+    # Labels for Taco Time NW
+    - type: symbol
+      filter: ["==", ["get", "brand:wikidata"], "Q7673970"]
+      layout:
+        text-field: "Taco Time NW"
+        text-size: 11
+        text-anchor: top
+        text-offset: [0, 1]
+      paint:
+        text-color: "#006655"
+        text-halo-color: "#ffffff"
+        text-halo-width: 1.5
+    # Labels for Taco Time national
+    - type: symbol
+      filter: ["==", ["get", "brand:wikidata"], "Q7673969"]
+      layout:
+        text-field: "Taco Time"
+        text-size: 11
+        text-anchor: top
+        text-offset: [0, 1]
+      paint:
+        text-color: "#CC5500"
+        text-halo-color: "#ffffff"
+        text-halo-width: 1.5
+---
+// test location: https://overpass-ultra.us/#m=5.78/46.725/-120.779
+[out:json][timeout:800];
+(
+  nwr["brand:wikidata"=Q7673969];
+  nwr["brand:wikidata"=Q7673970];
+);
+out center;
