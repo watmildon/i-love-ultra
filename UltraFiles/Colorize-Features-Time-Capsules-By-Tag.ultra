@@ -1,0 +1,61 @@
+---
+server: https://overpass.private.coffee/api/
+transform: |
+  export default (data) => {
+    data.features.forEach(f => {
+      const p = f.properties;
+      const buried = p.start_date;
+      const opens = p.opening_date || p.end_date;
+      const parts = [];
+      if (buried) parts.push("Buried: " + buried);
+      if (opens) parts.push("Opens: " + opens);
+      p._label = parts.length > 0 ? parts.join(" / ") : "Time Capsule";
+    });
+    return data;
+  };
+style:
+  projection:
+    type: "globe"
+  layers:
+    # man_made=time_capsule - blue
+    - type: circle
+      filter: ["==", ["get", "man_made"], "time_capsule"]
+      paint:
+        circle-color: "#0077BB"
+        circle-radius: 7
+        circle-stroke-color: "#000000"
+        circle-stroke-width: 2
+    # historic=time_capsule - orange
+    - type: circle
+      filter: ["==", ["get", "historic"], "time_capsule"]
+      paint:
+        circle-color: "#EE7733"
+        circle-radius: 7
+        circle-stroke-color: "#000000"
+        circle-stroke-width: 2
+    # memorial=time_capsule - teal
+    - type: circle
+      filter: ["==", ["get", "memorial"], "time_capsule"]
+      paint:
+        circle-color: "#009988"
+        circle-radius: 7
+        circle-stroke-color: "#000000"
+        circle-stroke-width: 2
+    # Labels
+    - type: symbol
+      layout:
+        text-field: ["get", "_label"]
+        text-size: 14
+        text-anchor: top
+        text-offset: [0, 1]
+      paint:
+        text-color: "#000000"
+---
+// test location: https://overpass-ultra.us/#m=3.69/50.63/14.31
+[out:json][timeout:800];
+(
+  nwr["man_made"=time_capsule];
+  nwr["historic"=time_capsule];
+  nwr["memorial"=time_capsule];
+);
+out center;
