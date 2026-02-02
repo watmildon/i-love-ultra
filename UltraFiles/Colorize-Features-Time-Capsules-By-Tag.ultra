@@ -1,5 +1,5 @@
 ---
-server: https://overpass.private.coffee/api/
+server: https://overpass.osm.jp/api/interpreter
 transform: |
   export default (data) => {
     data.features.forEach(f => {
