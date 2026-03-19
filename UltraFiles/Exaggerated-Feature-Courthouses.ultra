@@ -1,5 +1,5 @@
 ---
-server: https://overpass.private.coffee/api/
+server: https://overpass-api.de/api/interpreter
 transform: |
   import { transformScale } from "https://esm.sh/@turf/transform-scale";
   export default (data) => {

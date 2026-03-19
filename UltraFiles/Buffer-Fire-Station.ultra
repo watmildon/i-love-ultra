@@ -1,5 +1,5 @@
 ---
-server: https://overpass.private.coffee/api/
+server: https://overpass-api.de/api/interpreter
 transform: |
   import { buffer } from "https://esm.sh/@turf/buffer";
   export default (data) => {

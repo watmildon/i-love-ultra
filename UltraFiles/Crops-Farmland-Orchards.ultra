@@ -1,5 +1,5 @@
 ---
-server: https://overpass.private.coffee/api/
+server: https://overpass-api.de/api/interpreter
 transform: |
   import polylabel from "https://esm.sh/@mapbox/polylabel";
   export default (data) => {
