@@ -1,0 +1,33 @@
+---
+style:
+  layers:
+    - id: kcls-libraries-icon
+      type: symbol
+      source: ultra
+      layout:
+        icon-overlap: always
+        text-field: ["get", "name"]
+        text-font: ["Noto Sans Regular"]
+        text-size: 14
+        text-offset: [0, 1.2]
+        text-anchor: top
+        text-optional: true
+        icon-image:
+          - coalesce
+          - [ image, "emoji:books" ]
+          - [ image, "emoji:book" ]
+          - [ image, "emoji:question" ]
+        icon-size: 1.2
+      paint:
+        text-color: "#0077BB"
+        text-halo-color: "#FFFFFF"
+        text-halo-width: 1.5
+---
+// test location: https://overpass-ultra.us/#m=9.8/47.4892/-122.1306
+[out:json][timeout:25];
+// gather results
+(
+  nwr["operator:wikidata"=Q6411390][amenity=library];
+  nwr[operator="King County Library System"][amenity=library];
+);
+out center;

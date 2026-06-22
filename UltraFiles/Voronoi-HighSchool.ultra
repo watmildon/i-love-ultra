@@ -1,5 +1,5 @@
 ---
-server: https://overpass.private.coffee/api/
+server: https://overpass-api.de/api/interpreter
 transform: |
   import { voronoi } from "https://esm.sh/@turf/voronoi";
   export default (data) => {
