@@ -1,0 +1,57 @@
+---
+title: Flag clusters needing scouting (Postpass, live)
+description: man_made=flagpole missing flag:wikidata, DBSCAN-clustered server-side
+type: postpass
+options:
+  center: [-78.5, 37.9]
+  zoom: 6.3
+popupTemplate: |
+  <strong>{{ tags["n"] }} flagpole{% if tags["n"] != 1 %}s{% endif %} to scout</strong><br>
+  <a href="https://www.openstreetmap.org/node/{{ tags["osm_id"] }}" target="_blank" rel="noopener">Edit on OSM ↗</a>
+  <span style="color:#888"> (node {{ tags["osm_id"] }})</span>
+style:
+  layers:
+    # Cluster circles — red, sized by n (matches the review page's breakpoints)
+    - type: circle
+      circle-color: '#c8102e'
+      circle-opacity: 0.8
+      circle-stroke-width: 1.5
+      circle-stroke-color: '#ffffff'
+      circle-radius:
+        - step
+        - [get, n]
+        - 9
+        - 10
+        - 16
+        - 34
+        - 24
+        - 59
+        - 32
+    # Count label on each cluster
+    - type: symbol
+      text-field: ['get', 'n']
+      text-font: [Noto Sans Bold]
+      text-size: 12
+      text-color: '#ffffff'
+---
+-- test location: https://overpass-ultra.us/#m=9.8/47.4892/-122.1306
+WITH flags AS (
+  SELECT osm_id, geom
+  FROM postpass_point
+  WHERE tags->>'man_made' = 'flagpole'
+    AND NOT (tags ? 'flag:wikidata')
+    AND geom && ST_MakeEnvelope({{wsen}}, 4326)
+),
+clustered AS (
+  SELECT osm_id, geom,
+         ST_ClusterDBSCAN(ST_Transform(geom, 3857), eps := 400, minpoints := 3) OVER () AS cid
+  FROM flags
+)
+SELECT cid,
+       count(*)                        AS n,
+       min(osm_id)                     AS osm_id,
+       ST_Centroid(ST_Collect(geom))   AS geom
+FROM clustered
+WHERE cid IS NOT NULL
+GROUP BY cid
+ORDER BY n DESC
